@@ -1,10 +1,31 @@
 <template>
-  <el-table :data="tableData" style="width: 100%">
-    <el-table-column prop="id" label="编号" width="180"></el-table-column>
-    <el-table-column prop="userName" label="姓名" width="180"></el-table-column>
-    <el-table-column prop="age" label="年龄"></el-table-column>
-    <el-table-column prop="passWord" label="密码"></el-table-column>
-  </el-table>
+  <div class="root">
+    <!--查询条件-->
+    <div class="search">
+      <el-input type="text" placeholder="请输入用户名称" v-model="searchParams.userName" clearable class="input-with-select" prefix-icon="el-icon-search" style="width:240px"/>
+      <el-input type="number" placeholder="年龄" v-model.number="searchParams.age" clearable class="input-with-select" prefix-icon="el-icon-search" style="width:240px"/>
+      <el-input type="password" placeholder="密码" v-model="searchParams.passWord" clearable class="input-with-select" prefix-icon="el-icon-search" style="width:240px"/>
+      <el-button @click="searchByCondition" slot="append" icon="el-icon-search"></el-button>
+    </div>
+    <!--展示数据-->
+    <el-table :data="tableData" style="width: 100%">
+      <el-table-column prop="id" label="编号" width="180"></el-table-column>
+      <el-table-column prop="userName" label="姓名" width="180"></el-table-column>
+      <el-table-column prop="age" label="年龄"></el-table-column>
+      <el-table-column prop="passWord" label="密码"></el-table-column>
+    </el-table>
+    <!--分页参数-->
+    <el-pagination
+        background
+        @size-change="handleSizeChange"
+        @current-change="handleCurrentChange"
+        :current-page="searchParams.page"
+        :page-sizes="[3, 5, 10, 20]"
+        :page-size="searchParams.size"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="searchParams.totalItems">
+       </el-pagination>
+  </div>
 </template>
 
 <script>
@@ -12,23 +33,49 @@ import { getTableData, addUser } from "@/api/crud.js";
 export default {
   data() {
     return {
+      //分页参数
+      searchParams:{
+        userName: '',
+        age: null,
+        passWord: '',
+        page: 0,
+        size: 10,
+        totalItems: 0
+      },
       tableData: []
     };
   },
   mounted: function() {
     //网络请求统一处理
-    getTableData({
-        "page": 0,
-        "size": 10,
-        "userName": null
-      }).then(res => {
-      console.log("api tableData :", res);
-      this.tableData = res.data;
-    },err=>{
-      console.log("err :", err);
-    });
+    let that = this;
+    that.searchByCondition();
   },
-  methods: {}
+  methods: {
+    //每页大小改变事件
+    handleSizeChange(val) {
+      this.searchParams.size = val;
+      this.searchByCondition();
+      console.log(`每页 ${val} 条`);
+    },
+    //每页页码改变事件
+    handleCurrentChange(val) {
+      this.searchParams.page = val - 1;
+      this.searchByCondition();
+      console.log(`当前页: ${val}`);
+    },
+    //查询方法
+    searchByCondition() {
+      getTableData(this.searchParams).then(res => {
+        console.log("api tableData :", res);
+        this.tableData = res.data;
+        this.searchParams.page = res.pageInfo.page + 1;
+        this.searchParams.size = res.pageInfo.size;
+        this.searchParams.totalItems = res.pageInfo.total;
+      },err=>{
+        console.log("err :", err);
+      });
+    }
+  }
 };
 </script>
 
