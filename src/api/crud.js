@@ -1,6 +1,6 @@
 import request from '@/utils/request'
 
-export function getTableData(params) {
+function getTableData(params) {
   return request({
     url: 'jpaUser/queryByPage',
     method: 'POST',
@@ -8,10 +8,14 @@ export function getTableData(params) {
   })
 }
 
-export function addUser(params) {
+function addUser(params) {
   return request({
     url: "jpaUser/add",
     data: params,
     method: "POST"
   })
+}
+
+export default{
+  getTableData, addUser
 }

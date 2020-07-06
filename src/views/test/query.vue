@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import { getTableData, addUser } from "@/api/crud.js";
+import crud from "@/api/crud.js";
 export default {
   data() {
     return {
@@ -38,7 +38,7 @@ export default {
         userName: '',
         age: null,
         passWord: '',
-        page: 0,
+        page: 1,
         size: 10,
         totalItems: 0
       },
@@ -59,21 +59,31 @@ export default {
     },
     //每页页码改变事件
     handleCurrentChange(val) {
-      this.searchParams.page = val - 1;
+      this.searchParams.page = val;
       this.searchByCondition();
       console.log(`当前页: ${val}`);
     },
     //查询方法
     searchByCondition() {
-      getTableData(this.searchParams).then(res => {
+      crud.getTableData(this.proxyRequest(this.searchParams)).then(res => {
         console.log("api tableData :", res);
+        res = this.proxyResponse(res);
         this.tableData = res.data;
-        this.searchParams.page = res.pageInfo.page + 1;
+        this.searchParams.page = res.pageInfo.page;
         this.searchParams.size = res.pageInfo.size;
         this.searchParams.totalItems = res.pageInfo.total;
       },err=>{
         console.log("err :", err);
       });
+    },
+    proxyRequest(request){
+      let proxyRequest = JSON.parse(JSON.stringify(request));
+      proxyRequest.page = proxyRequest.page - 1;
+      return proxyRequest;
+    },
+    proxyResponse(response){
+      response.pageInfo.page = response.pageInfo.page + 1;
+      return response;
     }
   }
 };
