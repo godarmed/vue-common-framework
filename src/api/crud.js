@@ -16,6 +16,14 @@ function addUser(params) {
   })
 }
 
+function editUser(params) {
+  return request({
+    url: "jpaUser/update",
+    data: params,
+    method: "POST"
+  })
+}
+
 export default{
-  getTableData, addUser
+  getTableData, addUser, editUser
 }

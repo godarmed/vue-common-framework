@@ -111,7 +111,16 @@ export const constantRoutes = [
         meta: {
           title: '添加',
         }
+      },
+      {
+        path: 'edit',
+        name: 'edit',
+        component: () => import('@/views/test/edit'),
+        meta: {
+          title: '编辑',
+        }
       }
+
     ]
   },
   // 404 page must be placed at the end !!!

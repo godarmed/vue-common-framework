@@ -18,21 +18,12 @@
           </el-form-item>
         </el-form>
       </el-col>
-      <el-col :span="12">
-        <div class="img-wrap">
-          <el-image
-            fit="scale-down"
-            style="width: 400px; height: 400px;"
-            :src="imgUrl"
-          ></el-image>
-        </div>
-      </el-col>
     </el-row>
   </div>
 </template>
 
 <script>
-import { addUser } from "@/api/crud.js";
+import crud from "@/api/crud.js";
 export default {
   data() {
     return {
@@ -52,8 +43,7 @@ export default {
         passWord: [
           { required: true, message: '请输入密码', trigger: 'change' }
         ]
-      },
-      imgUrl: "https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg"
+      }
     };
   },
   created: function() {
@@ -62,7 +52,7 @@ export default {
     submitForm(formName) {
       this.$refs[formName].validate((valid) => {
         if (valid) {
-          addUser({
+          crud.addUser({
             userName: this.form.userName,
             age: this.form.age,
             passWord: this.form.passWord

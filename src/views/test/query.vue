@@ -13,6 +13,12 @@
       <el-table-column prop="userName" label="姓名" width="180"></el-table-column>
       <el-table-column prop="age" label="年龄"></el-table-column>
       <el-table-column prop="passWord" label="密码"></el-table-column>
+      <el-table-column label="操作">
+        <template slot-scope="scope">
+          <el-button size="mini" type="primary" plain @click = "editUser(scope.row)">编辑</el-button>
+          <el-button size="mini" type="danger">删除</el-button>
+        </template>
+      </el-table-column>
     </el-table>
     <!--分页参数-->
     <el-pagination
@@ -84,6 +90,11 @@ export default {
     proxyResponse(response){
       response.pageInfo.page = response.pageInfo.page + 1;
       return response;
+    },
+    //修改方法
+    editUser(params){
+      console.log('before router:' + JSON.stringify(params))
+      this.$router.push({ name: "edit", params:{editParams:params} });
     }
   }
 };
